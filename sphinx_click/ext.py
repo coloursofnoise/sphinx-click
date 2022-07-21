@@ -145,7 +145,10 @@ def _format_usage(ctx: click.Context) -> ty.Generator[str, None, None]:
 
 def _format_option(opt: click.Option) -> ty.Generator[str, None, None]:
     """Format the output for a `click.Option`."""
-    opt_help = _get_help_record(opt)
+    if callable(getattr(opt.__class__, "sphinx_get_help_record", None)):
+        opt_help = opt.sphinx_get_help_record(_get_help_record)
+    else:
+        opt_help = _get_help_record(opt)
 
     yield '.. option:: {}'.format(opt_help[0])
     if opt_help[1]:
